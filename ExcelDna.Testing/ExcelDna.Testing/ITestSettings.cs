@@ -16,5 +16,10 @@
         /// A relative path to .xll add-in to load. Without bitness and .xll extension.
         /// </summary>
         string AddIn { get; set; }
+
+        /// <summary>
+        /// Whether to start Excel in safe mode using the /safe command-line switch.
+        /// </summary>
+        bool SafeMode { get; set; }
     }
 }

@@ -16,5 +16,8 @@ namespace Xunit
 
         /// <inheritdoc />
         public string AddIn { get; set; }
+
+        /// <inheritdoc />
+        public bool SafeMode { get; set; }
     }
 }

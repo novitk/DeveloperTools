@@ -35,14 +35,17 @@ namespace ExcelDna.Testing
         protected override async Task<RunSummary> RunTestCollectionsAsync(IMessageBus messageBus, CancellationTokenSource cancellationTokenSource)
         {
             IEnumerable<IXunitTestCase> localTestCases = TestCases.Except(TestCases.OfType<ExcelTestCase>());
-            IEnumerable<ExcelTestCase> excelInProcessTestCases = TestCases.OfType<ExcelTestCase>().Where(i => !i.Settings.OutOfProcess);
+            IEnumerable<ExcelTestCase> excelInProcessTestCases = TestCases.OfType<ExcelTestCase>().Where(i => !i.Settings.OutOfProcess && !i.Settings.SafeMode);
+            IEnumerable<ExcelTestCase> excelInProcessSafeTestCases = TestCases.OfType<ExcelTestCase>().Where(i => !i.Settings.OutOfProcess && i.Settings.SafeMode);
             IEnumerable<ExcelTestCase> excelOutOfProcessTestCases = TestCases.OfType<ExcelTestCase>().Where(i => i.Settings.OutOfProcess);
 
             var result = await LocalRunTestCasesAsync(localTestCases, messageBus, cancellationTokenSource);
             if (excelOutOfProcessTestCases.Count() > 0)
                 result.Aggregate(await COMRunTestCasesAsync(excelOutOfProcessTestCases, messageBus, cancellationTokenSource));
             if (excelInProcessTestCases.Count() > 0)
-                result.Aggregate(await RemoteRunTestCasesAsync(excelInProcessTestCases, messageBus, cancellationTokenSource));
+                result.Aggregate(await RemoteRunTestCasesAsync(excelInProcessTestCases, messageBus, cancellationTokenSource, false));
+            if (excelInProcessSafeTestCases.Count() > 0)
+                result.Aggregate(await RemoteRunTestCasesAsync(excelInProcessSafeTestCases, messageBus, cancellationTokenSource, true));
 
             CleanupReferences();
 
@@ -58,13 +61,13 @@ namespace ExcelDna.Testing
             return result;
         }
 
-        private async Task<RunSummary> RemoteRunTestCasesAsync(IEnumerable<ExcelTestCase> testCases, IMessageBus messageBus, CancellationTokenSource cancellationTokenSource)
+        private async Task<RunSummary> RemoteRunTestCasesAsync(IEnumerable<ExcelTestCase> testCases, IMessageBus messageBus, CancellationTokenSource cancellationTokenSource, bool safeMode)
         {
             RunSummary result = new RunSummary();
             try
             {
                 ExcelStartupEvent.Create();
-                Process excelProcess = excelRunner.Start(testAssembly.Assembly.AssemblyPath, GetAddins(testCases));
+                Process excelProcess = excelRunner.Start(testAssembly.Assembly.AssemblyPath, GetAddins(testCases), safeMode);
                 if (!ExcelStartupEvent.Wait(30000))
                     throw new System.ApplicationException("Excel startup failed.");
 

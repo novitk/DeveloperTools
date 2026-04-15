@@ -35,6 +35,7 @@ namespace ExcelDna.Testing
             info.AddValue(nameof(testSettings.OutOfProcess), testSettings.OutOfProcess);
             info.AddValue(nameof(testSettings.Workbook), testSettings.Workbook);
             info.AddValue(nameof(testSettings.AddIn), testSettings.AddIn);
+            info.AddValue(nameof(testSettings.SafeMode), testSettings.SafeMode);
         }
 
         public override void Deserialize(IXunitSerializationInfo info)
@@ -43,7 +44,8 @@ namespace ExcelDna.Testing
             testSettings = new ExcelTestSettings(
                 info.GetValue<bool>(nameof(testSettings.OutOfProcess)),
                 info.GetValue<string>(nameof(testSettings.Workbook)),
-                info.GetValue<string>(nameof(testSettings.AddIn)));
+                info.GetValue<string>(nameof(testSettings.AddIn)),
+                info.GetValue<bool>(nameof(testSettings.SafeMode)));
         }
 
         public string SerializeToString()

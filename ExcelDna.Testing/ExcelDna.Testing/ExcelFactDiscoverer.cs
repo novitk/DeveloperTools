@@ -24,7 +24,8 @@ namespace ExcelDna.Testing
             return new ExcelTestSettings(
                 GetSetting<bool>(testMethod, nameof(ExcelFactAttribute.OutOfProcess)),
                 GetSetting<string>(testMethod, nameof(ExcelFactAttribute.Workbook)),
-                GetSetting<string>(testMethod, nameof(ExcelFactAttribute.AddIn)));
+                GetSetting<string>(testMethod, nameof(ExcelFactAttribute.AddIn)),
+                GetSetting<bool>(testMethod, nameof(ExcelFactAttribute.SafeMode)));
         }
 
         private static T GetSetting<T>(ITestMethod testMethod, string name)

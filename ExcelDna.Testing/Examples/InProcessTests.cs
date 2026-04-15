@@ -63,7 +63,7 @@ namespace Examples
             Assert.Equal("Completed", targetRange.Value);
         }
 
-        [ExcelFact(Workbook = "", AddIn = @"..\..\..\..\ExampleAddinNET6\bin\Debug\net6.0-windows\ExampleAddinNET6-AddIn")]
+        [ExcelFact(Workbook = "", AddIn = @"..\..\..\..\ExampleAddinNET6\bin\Debug\net6.0-windows\ExampleAddinNET6-AddIn", SafeMode = true)]
         public void FunctionTestNET6()
         {
             Range targetRange = (ExcelDna.Testing.Util.Workbook.Sheets[1] as Worksheet).Range["A1"];
